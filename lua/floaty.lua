@@ -91,7 +91,7 @@ M.setup = function(user_config)
     local ftype = vim.bo.filetype
     local runner = config.runners[ftype]
     if runner ~= nil then
-      create_new('zsh', runner .. ' ' .. name, win_opts)
+      create_new('zsh', runner:gsub('{}', name), win_opts)
     end
   end
 end
