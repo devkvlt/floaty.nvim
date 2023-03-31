@@ -46,7 +46,7 @@ require('floaty').setup({
 })
 ```
 
-`{}` is the name of the file to run.
+`{}` expands to the full path to the file to run.
 
 ## Keymaps
 
