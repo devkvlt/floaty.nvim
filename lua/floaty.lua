@@ -1,6 +1,3 @@
-local editor_width = vim.o.columns
-local editor_height = vim.o.lines - vim.o.cmdheight
-
 local config = {
   width = 0.5,
   height = 0.5,
@@ -11,6 +8,22 @@ local config = {
 
 local floaty_bufnr = nil
 local running = false
+
+-- Setup fresh window options
+local function make_winopts()
+  local editor_width = vim.o.columns
+  local editor_height = vim.o.lines - vim.o.cmdheight
+
+  return {
+    relative = 'editor',
+    width = math.floor(editor_width * config.width),
+    height = math.floor(editor_height * config.height),
+    col = math.floor((1 - config.width) * editor_width / 2) - 1,
+    row = math.floor((1 - config.height) * editor_height / 2) - 1,
+    style = 'minimal',
+    border = config.border,
+  }
+end
 
 -- Kill the current terminal
 local function kill()
@@ -52,21 +65,10 @@ M.setup = function(user_config)
     config = vim.tbl_extend('force', config, user_config)
   end
 
-  -- Setup window options
-  local win_opts = {
-    relative = 'editor',
-    width = math.floor(editor_width * config.width),
-    height = math.floor(editor_height * config.height),
-    col = math.floor((1 - config.width) * editor_width / 2) - 1,
-    row = math.floor((1 - config.height) * editor_height / 2) - 1,
-    style = 'minimal',
-    border = config.border,
-  }
-
   M.toggle = function()
     -- Create new and open
     if not running then
-      create_new('zsh', '', win_opts)
+      create_new('zsh', '', make_winopts())
       return
     end
     -- Close current
@@ -75,7 +77,7 @@ M.setup = function(user_config)
       return
     end
     -- Open existing
-    vim.api.nvim_open_win(floaty_bufnr, true, win_opts)
+    vim.api.nvim_open_win(floaty_bufnr, true, make_winopts())
     vim.cmd('startinsert')
   end
 
@@ -91,7 +93,7 @@ M.setup = function(user_config)
     local ftype = vim.bo.filetype
     local runner = config.runners[ftype]
     if runner ~= nil then
-      create_new('zsh', runner:gsub('{}', name), win_opts)
+      create_new('zsh', runner:gsub('{}', name), make_winopts())
     end
   end
 end
