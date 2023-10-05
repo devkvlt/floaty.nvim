@@ -86,7 +86,7 @@ M.setup = function(user_config)
   -- Run the code in the current file
   M.run = function()
     if running then
-      vim.notify('Floaty: there is a terminal running, close it before you run the code!', { severity = 'error' })
+      vim.notify('Floaty: there is a terminal running, close it before you run the code!', vim.log.levels.ERROR)
       return
     end
     local name = vim.api.nvim_buf_get_name(0)
